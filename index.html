@@ -1,14 +1,50 @@
-<template>
-<div id="app">
-  {{ message }}
+<script src="https://unpkg.com/vue"></script>
+<div id="front-page">
+  <ul id="nav">
+    <li><a href="#">About</a></li>
+    <li><a href="clusters.html">Clusters</a></li>
+  </ul>
+  <div class="content">
+  <p id="about">
+    <b id="name">Nicholas Hausch</b>
+    <br/>
+    <br/>
+    Hello and welcome to my website. This is a collection of some projects I've done. Currently I am working at XPeng Motors as a software engineer in the autopilot team. Check out the links above!
+  </p>
+  </div>
 </div>
-</template>
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script>
-  var app = new Vue({
-    el: '#app',
-    data: {
-      message: 'Hello Vue!'
-    }
-  })
-</script>
+<style>
+  #front-page {
+    font-family: Courier;
+  }
+  #nav {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #f3f3f3;
+    border: 1px solid #e7e7e7;
+  }
+  #about {
+    color: #323232;
+    background-color: #D9E3E4;
+    border: 20px solid #D9E3E4;
+    font-family: Courier;
+  }
+  #name {
+    font-size: 20px;
+  }
+  li {
+    float: left;
+  }
+  li a {
+    display: block;
+    color: #666;
+    padding: 8px 16px;
+    text-decoration: none;
+  }
+  li a:hover {
+    background-color: #555;
+    color: white;
+  }
+</style>
