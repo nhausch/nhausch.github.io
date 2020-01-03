@@ -1,0 +1,118 @@
+<div id="block-partition-summary">
+  <ul id="nav">
+    <li><a href="index.html">About</a></li>
+    <li><a href="clusters.html">Clusters</a></li>
+    <li><a href="#">Block Partition</a></li>
+  </ul>
+  <div class="content">
+  <p id="about">
+    <b id="name">Block Partition</b>
+    <br/>
+    <br/>
+    This is an original algorithm that can efficiently find nearest neighbors for multidimensional data. The main idea is to partition the space into a set of blocks. Then when we search for neighbors, we only need to search nearby blocks. It works best in scenarios with a large amount of lower dimensional data. This is a personal research project that arose from my studies as an undergrad. I hope to eventually publish my findings more formally. In the meantime, please check out the repo on <a href="https://github.com/nhausch/BlockPartition">Github</a>.
+    <br/>
+    <br/>
+    Here is a 2D example. We want to find the nearest three neighbors for the orange point. First, we split the space evenly along each dimension. Then, we use binary search to quickly assign each point to a box. The box with the point of interest is called the root block. Here we assume that each block is 1x1.
+    <br/>
+    <br/>
+    <img src="images/bp_0.png" width="500" height="200">
+    <img src="images/bp_1.png" width="500" height="200">
+    <br/>
+    <br/>
+    Next, we sort the boxes that contain data points based on their minimum distance. We then iterate over the blocks in order of miminum distance. If have computed the necessary number of neighbors, then we begin tracking the max distance to a neighbor (Dmax). If we reach a block with a minimum distance to the root block that is greater than the current Dmax, then the algorithm terminates, as no closer points can be found. Here we would only compute the distance to the points in the gray blocks, since Dmax < 1.
+    <br/>
+    <br/>
+    <img src="images/bp_2.png" width="500" height="200">
+    <img src="images/bp_3.png" width="500" height="200">
+    <br/>
+    <br/>
+    The run time for this method can vary based on the input data and the chosen partition size. If the partition size is too large or too small, the algorithm will preform worse than brute force. I will add results here as I obtain them. Results are obtained using a <a href="https://github.com/nhausch/BlockPartition/blob/master/blocks.py">python script</a>. "Block Partition" describes the time to construct the partition. "Single Run" describes the time to find the nearest neighbors for one point using the partition. "Brute Force" describes the time needed to compute the necessary row of the distance matrix and sort it. All units are nanoseconds. 
+    <table id="results-table">
+      <tr>
+        <th>Dimension</th>
+        <th>Points</th>
+        <th>Data Type</th>
+        <th>Neighbors</th>
+        <th>Block Partition</th>
+        <th>Single Run</th>
+        <th>Brute Force</th>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>10000</td>
+        <td>Uniform</td>
+        <td>10</td>
+        <td>148.09</td>
+        <td>8.52</td>
+        <td>30.60317039489746</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>20000</td>
+        <td>Uniform</td>
+        <td>15</td>
+        <td>261.25</td>
+        <td>15.88</td>
+        <td>50.74317039489746</td>
+      </tr>
+    </table>
+    <br/>
+    Let's briefly compare the mathematics using of this method and computing a distance matrix (brute force). The complexity for brute force is N^2. The block partition algorithm, on the other hand, has two parts. The first is constructing the partition, which has complexity N * D * log(K). D is the number of dimensions and K is the partition size. After that, the cost of computing the nearest neighbors for one point is at most N, and at least D. 
+    <br/>
+    <br/>
+    Thanks for reading! This is a work in progress. If you have any suggestions or just want to chat, send me an email @ nhausch@gmail.com 
+  </p>
+  </div>
+</div>
+
+<style>
+  #block-partition-summary {
+    font-family: Courier;
+  }
+  #nav {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #f3f3f3;
+    border: 1px solid #e7e7e7;
+  }
+  #about {
+    color: #323232;
+    background-color: #D9E3E4;
+    border: 20px solid #D9E3E4;
+    font-family: Courier;
+  }
+  #name {
+    font-size: 20px;
+  }
+  li {
+    float: left;
+  }
+  li a {
+    display: block;
+    color: #666;
+    padding: 8px 16px;
+    text-decoration: none;
+  }
+  li a:hover {
+    background-color: #555;
+    color: white;
+  }
+  svg.graph {
+    height: 500px;
+    width: 800px;
+    position: relative;
+    top: 10px;
+  }
+  svg.graph .grid {
+    stroke: black;
+    stroke-dasharray: 1 2;
+    stroke-width: 1;
+  }
+  #results-table {
+    width: 70%;
+    text-align: left;
+    padding: 15px;
+  }
+</style>
