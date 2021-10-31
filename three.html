@@ -1,9 +1,36 @@
 <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
-<div id="front-page">
+<div id="three-js-sandbox">
   <ul id="nav">
-    <li><a href="#">About</a></li>
+    <li><a href="index.html">About</a></li>
     <li><a href="clusters.html">Clustering Visualizer</a></li>
+    <li><a href="#">Three JS Sandbox</a></li>
   </ul>
 </div>
 
+<style>
+  #three-js-sandbox {
+    font-family: Courier;
+  }
+  #nav {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #f3f3f3;
+    border: 1px solid #e7e7e7;
+  }
+  li {
+    float: left;
+  }
+  li a {
+    display: block;
+    color: #666;
+    padding: 8px 16px;
+    text-decoration: none;
+  }
+  li a:hover {
+    background-color: #555;
+    color: white;
+  }
+</style>
