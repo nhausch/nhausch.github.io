@@ -1,12 +1,51 @@
 <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
-<div id="three-js-sandbox">
-  <ul id="nav">
-    <li><a href="index.html">About</a></li>
-    <li><a href="clusters.html">Clustering Visualizer</a></li>
-    <li><a href="#">Three JS Sandbox</a></li>
-  </ul>
-</div>
+<body>
+  <div id="three-js-sandbox">
+    <ul id="nav">
+      <li><a href="index.html">About</a></li>
+      <li><a href="clusters.html">Clustering Visualizer</a></li>
+      <li><a href="#">Three JS Sandbox</a></li>
+    </ul>
+  </div>
+  <div id="like_button_container"></div>
+  <canvas id="c">
+
+  </canvas>
+
+  <script type="module">
+    import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
+    
+    // Setup
+    const canvas = document.querySelector('#c');
+    const scene = new THREE.Scene();
+		const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+		const renderer = new THREE.WebGLRenderer({canvas});
+    const canvas_width = 800;
+    const canvas_height = 500;
+    renderer.setSize(canvas_width, canvas_height);
+
+    // Add cube
+    const geometry = new THREE.BoxGeometry();
+    const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+    const cube = new THREE.Mesh( geometry, material );
+    scene.add( cube );
+
+    // Render the scene
+    camera.position.z = 4;
+    const animate = function () {
+      requestAnimationFrame( animate );
+      cube.rotation.x += 0.01;
+      cube.rotation.y += 0.01;
+      renderer.render(scene, camera);
+    };
+
+    animate();
+
+  </script>
+</body>
+
+
 
 <style>
   #three-js-sandbox {
@@ -32,5 +71,13 @@
   li a:hover {
     background-color: #555;
     color: white;
+  }
+
+  #c {
+    position: relative;
+    left: 50;
+    top: 50;
+    display: block;
+    z-index: -1;
   }
 </style>
