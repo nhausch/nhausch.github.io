@@ -8,44 +8,63 @@
       <li><a href="#">Three JS Sandbox</a></li>
     </ul>
   </div>
-  <div id="like_button_container"></div>
+  <p id="about"> 
+    <b id="name">Generating Shapes</b>
+    <br/><br/>
+    Three JS is a javascript graphics library based on WebGL. The goal here is to render shapes based on some variable input. Currently WIP.
+  </p>
   <canvas id="c">
 
   </canvas>
 
   <script type="module">
     import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
-    
-    // Setup
+    "use strict";    // Setup
     const canvas = document.querySelector('#c');
     const scene = new THREE.Scene();
-		const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+		const camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 0.1, 100 );
+    camera.position.set(0, 20, 0);
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
 		const renderer = new THREE.WebGLRenderer({canvas});
     const canvas_width = 800;
     const canvas_height = 500;
     renderer.setSize(canvas_width, canvas_height);
 
-    // Add cube
+    // Init geometries and materials
     const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-    const cube = new THREE.Mesh( geometry, material );
-    scene.add( cube );
+    const material = new THREE.MeshBasicMaterial( { color: 0xcce6ff, opacity: 0.7, transparent: true } );
+    var mat = new THREE.LineBasicMaterial( { color: 0xffffff, linewidth: 2 } );
+
+    // Array of cubes
+    let cubes = []
+    for (let i = -9; i < 10; i++) {
+      for (let j = -9; j < 10; j++) {
+        var geo = new THREE.EdgesGeometry( geometry );
+        var wireframe = new THREE.LineSegments( geo, mat );
+        wireframe.position.x = i * 2;
+        wireframe.position.z = j * 2;
+        wireframe.position.y = 0;
+        cubes.push(wireframe);
+        scene.add(wireframe);
+      }
+    }
 
     // Render the scene
-    camera.position.z = 4;
     const animate = function () {
       requestAnimationFrame( animate );
-      cube.rotation.x += 0.01;
-      cube.rotation.y += 0.01;
+      for (let i = 0; i < 361; i++) {
+        // cubes[i].rotation.x += 0.05;
+        // cubes[i].rotation.y += 0.02;
+        // cubes[i].rotation.z += 0.02;
+        let y = camera.position.y;
+        camera.position.set(0, y - 0.0001, 0);
+      }
       renderer.render(scene, camera);
     };
-
     animate();
 
   </script>
 </body>
-
-
 
 <style>
   #three-js-sandbox {
@@ -79,5 +98,17 @@
     top: 50;
     display: block;
     z-index: -1;
+  }
+
+  #about {
+    color: #323232;
+    background-color: #D9E3E4;
+    border: 20px solid #D9E3E4;
+    font-family: Courier;
+    max-width: 800px;
+  }
+
+  #name {
+    font-size: 20px;
   }
 </style>
