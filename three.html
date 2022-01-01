@@ -13,13 +13,15 @@
     <br/><br/>
     Three JS is a javascript graphics library based on WebGL. The goal here is to render shapes based on some variable input. Currently WIP.
   </p>
-  <canvas id="c">
-
-  </canvas>
+  <canvas id="c"></canvas>
 
   <script type="module">
+
+    // Imports
+    "use strict";   
     import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
-    "use strict";    // Setup
+
+    // Setup Three
     const canvas = document.querySelector('#c');
     const scene = new THREE.Scene();
 		const camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 0.1, 100 );
@@ -30,35 +32,64 @@
     const canvas_height = 500;
     renderer.setSize(canvas_width, canvas_height);
 
-    // Init geometries and materials
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshBasicMaterial( { color: 0xcce6ff, opacity: 0.7, transparent: true } );
-    var mat = new THREE.LineBasicMaterial( { color: 0xffffff, linewidth: 2 } );
+   /* * * * * * * * * *  
+    * ThreeJS Classes *
+    * * * * * * * * * */
+    // Wireframe Cubes
+    class WireframeCubes {
+      constructor(height, width, spacing, zoom_speed) {
+        this.height = height;
+        this.width = width;
+        this.spaceing = spacing;
+        this.zoom_speed = zoom_speed;
+        this.cubes = [];
+      }
 
-    // Array of cubes
-    let cubes = []
-    for (let i = -9; i < 10; i++) {
-      for (let j = -9; j < 10; j++) {
-        var geo = new THREE.EdgesGeometry( geometry );
-        var wireframe = new THREE.LineSegments( geo, mat );
-        wireframe.position.x = i * 2;
-        wireframe.position.z = j * 2;
-        wireframe.position.y = 0;
-        cubes.push(wireframe);
-        scene.add(wireframe);
+      render() {
+
+        // Init geometries and materials
+        const geometry = new THREE.BoxGeometry();
+        const material = new THREE.MeshBasicMaterial( { color: 0xcce6ff, opacity: 0.7, transparent: true } );
+        var mat = new THREE.LineBasicMaterial( { color: 0xffffff, linewidth: 2 } );
+
+        // Create the array of cubes
+        for (let i = -9; i < 10; i++) {
+          for (let j = -9; j < 10; j++) {
+            var geo = new THREE.EdgesGeometry( geometry );
+            var wireframe = new THREE.LineSegments( geo, mat );
+            wireframe.position.x = i * 2;
+            wireframe.position.z = j * 2;
+            wireframe.position.y = 0;
+            this.cubes.push(wireframe);
+            scene.add(wireframe);
+          }
+        }
+      }
+
+      animationStep() {
+
+        // zoom in
+        let y = camera.position.y;
+        camera.position.set(0, y - 0.1, 0);
+        var should_reset = camera.position.y < -1.0;
+        return should_reset;
+      }
+
+      reset() {
+        camera.position.set(0, 20, 0);
       }
     }
 
+    // Declare
+    let cubes = new WireframeCubes(0, 0, 0, 0);
+    cubes.render();
+
     // Render the scene
+    let current_animation_finished = false;
     const animate = function () {
       requestAnimationFrame( animate );
-      for (let i = 0; i < 361; i++) {
-        // cubes[i].rotation.x += 0.05;
-        // cubes[i].rotation.y += 0.02;
-        // cubes[i].rotation.z += 0.02;
-        let y = camera.position.y;
-        camera.position.set(0, y - 0.0001, 0);
-      }
+      current_animation_finished = cubes.animationStep();
+      if (current_animation_finished) { cubes.reset(); }
       renderer.render(scene, camera);
     };
     animate();
