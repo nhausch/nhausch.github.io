@@ -25,43 +25,62 @@
     const canvas = document.querySelector('#c');
     const scene = new THREE.Scene();
 		const camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 0.1, 100 );
-    camera.position.set(0, 20, 0);
+    const default_camera_height = 20;
+    camera.position.set(0, default_camera_height, 0);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
 		const renderer = new THREE.WebGLRenderer({canvas});
     const canvas_width = 800;
     const canvas_height = 500;
     renderer.setSize(canvas_width, canvas_height);
+    const frame_rate = 60;
+
+    // Colors
+    const white_color = 0xffffff;
+    const blue_colors = [0xe6f2ff, 0xb3d9ff, 0x80bfff, 0x4da6ff, 0x3366ff, 0x1a53ff, 0x0039e6, 0x002db3, 0x002080, 0x00134d]
 
    /* * * * * * * * * *  
     * ThreeJS Classes *
     * * * * * * * * * */
     // Wireframe Cubes
     class WireframeCubes {
-      constructor(height, width, spacing, zoom_speed) {
+      constructor(height, width, num_layers, duration, colors) {
         this.height = height;
         this.width = width;
-        this.spaceing = spacing;
-        this.zoom_speed = zoom_speed;
+        this.num_layers = num_layers;
+        this.final_height = -1.0 * num_layers * 2 - 2;
+        this.duration = duration;
+        this.zoom_speed = (default_camera_height - this.final_height) / (duration * 60);
         this.cubes = [];
+        this.materials = [];
+        for (let i = 0; i < colors.length; i++) {
+          this.materials.push(new THREE.LineBasicMaterial( { color: colors[i] } ))
+        }
+        console.log(this.materials)
+
+        // Set camera height
+        camera.position.set(0, default_camera_height, 0);
       }
 
       render() {
 
         // Init geometries and materials
-        const geometry = new THREE.BoxGeometry();
-        const material = new THREE.MeshBasicMaterial( { color: 0xcce6ff, opacity: 0.7, transparent: true } );
-        var mat = new THREE.LineBasicMaterial( { color: 0xffffff, linewidth: 2 } );
+        const geometry = new THREE.BoxGeometry(this.width, 1, this.height);
+        const material = new THREE.MeshBasicMaterial();
 
-        // Create the array of cubes
+        // Create the array of cubes (layers are 19 x 19)
         for (let i = -9; i < 10; i++) {
           for (let j = -9; j < 10; j++) {
-            var geo = new THREE.EdgesGeometry( geometry );
-            var wireframe = new THREE.LineSegments( geo, mat );
-            wireframe.position.x = i * 2;
-            wireframe.position.z = j * 2;
-            wireframe.position.y = 0;
-            this.cubes.push(wireframe);
-            scene.add(wireframe);
+            for (let k = -1 * this.num_layers + 1; k < 1; k++) {
+              let color_index = Math.abs(k) % this.materials.length
+              console.log(i, j, k, color_index)
+              var geo = new THREE.EdgesGeometry( geometry );
+              var wireframe = new THREE.LineSegments( geo, this.materials[color_index]);
+              wireframe.position.x = i * 2;
+              wireframe.position.z = j * 2;
+              wireframe.position.y = k * 2;
+              this.cubes.push(wireframe);
+              scene.add(wireframe);
+            }
           }
         }
       }
@@ -70,18 +89,18 @@
 
         // zoom in
         let y = camera.position.y;
-        camera.position.set(0, y - 0.1, 0);
-        var should_reset = camera.position.y < -1.0;
+        camera.position.set(0, y - this.zoom_speed, 0);
+        var should_reset = camera.position.y < this.final_height;
         return should_reset;
       }
 
       reset() {
-        camera.position.set(0, 20, 0);
+        camera.position.set(0, default_camera_height, 0);
       }
     }
 
     // Declare
-    let cubes = new WireframeCubes(0, 0, 0, 0);
+    let cubes = new WireframeCubes(1.2, 1.2, 20, 4, [0xffff1a, 0x9900ff]);
     cubes.render();
 
     // Render the scene
